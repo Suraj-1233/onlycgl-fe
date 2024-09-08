@@ -1,0 +1,82 @@
+<div *ngIf="mockTest">
+  <!-- Header and Timer Section -->
+  <header class="header">
+    <h1>{{ mockTest.title }}</h1>
+    <h3>Duration: {{ mockTest.duration }} mins | Total Questions: {{ mockTest.totalQuestions }}</h3>
+    <div class="timer">
+      <span>Time Left: <strong>1:23:45</strong></span>
+    </div>
+  </header>
+
+  <!-- Section Tabs -->
+  <div class="section-tabs">
+    <button (click)="changeSection('General Intelligence & Reasoning')" [class.active]="selectedSection === 'General Intelligence & Reasoning'">General Intelligence & Reasoning</button>
+    <button (click)="changeSection('General Awareness')" [class.active]="selectedSection === 'General Awareness'">General Awareness</button>
+    <button (click)="changeSection('Quantitative Aptitude')" [class.active]="selectedSection === 'Quantitative Aptitude'">Quantitative Aptitude</button>
+    <button (click)="changeSection('English Comprehension')" [class.active]="selectedSection === 'English Comprehension'">English Comprehension</button>
+  </div>
+
+  <!-- Language Toggle -->
+  <div class="language-toggle">
+    <button (click)="changeLanguage('en')">English</button>
+    <button (click)="changeLanguage('hi')">हिंदी</button>
+  </div>
+
+  <!-- Question Navigation Panel -->
+  <div class="question-navigation-panel">
+    <div *ngFor="let question of questions; let i = index" class="question-number" (click)="goToQuestion(i)">
+      <span [ngClass]="{
+        'answered': questionStatuses[i] === 'answered',
+        'not-answered': questionStatuses[i] === 'not-answered',
+        'not-visited': questionStatuses[i] === 'not-visited',
+        'marked-for-review': questionStatuses[i] === 'marked-for-review',
+        'answered-marked-for-review': questionStatuses[i] === 'answered-marked-for-review'
+      }">
+        {{ i + 1 }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Display the Current Question -->
+  <section class="question-panel" *ngIf="questions.length > 0">
+    <div class="question-info">
+      <div class="question-number">Question No: {{ currentQuestionIndex + 1 }}</div>
+      <div class="marks-time">
+        <span>Marks: +{{ questions[currentQuestionIndex].marks }} / -{{ questions[currentQuestionIndex].negativeMarks }}</span>
+      </div>
+    </div>
+
+    <div class="question-text" *ngIf="questions[currentQuestionIndex]">
+      <p>{{ getTranslatedText(questions[currentQuestionIndex]) }}</p>
+    </div>
+
+    <!-- Options -->
+    <div class="question-options" *ngIf="questions[currentQuestionIndex]">
+      <label>
+        <input type="radio" name="option{{ questions[currentQuestionIndex].questionId }}" /> {{ getTranslatedOption(questions[currentQuestionIndex], 'optionA') }}
+      </label>
+      <label>
+        <input type="radio" name="option{{ questions[currentQuestionIndex].questionId }}" /> {{ getTranslatedOption(questions[currentQuestionIndex], 'optionB') }}
+      </label>
+      <label>
+        <input type="radio" name="option{{ questions[currentQuestionIndex].questionId }}" /> {{ getTranslatedOption(questions[currentQuestionIndex], 'optionC') }}
+      </label>
+      <label>
+        <input type="radio" name="option{{ questions[currentQuestionIndex].questionId }}" /> {{ getTranslatedOption(questions[currentQuestionIndex], 'optionD') }}
+      </label>
+    </div>
+  </section>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <button class="clear-response" (click)="clearResponse()">Clear Response</button>
+    <button class="mark-for-review" (click)="markForReview()">Mark for Review</button>
+    <button class="save-and-mark-for-review" (click)="saveAndMarkForReview()">Save & Mark for Review</button>
+    <button class="save-and-next" (click)="saveAndNext()">Save & Next</button>
+  </div>
+
+  <!-- Submit Test Button -->
+  <div class="submit-test">
+    <button >Submit Test</button>
+  </div>
+</div>

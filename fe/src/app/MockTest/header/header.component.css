@@ -1,0 +1,11 @@
+.header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .logo {
+    width: 120px;
+    margin-right: 20px;
+  }
+  

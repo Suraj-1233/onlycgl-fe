@@ -1,0 +1,86 @@
+.header {
+  background-color: #f5f5f5;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-tabs button {
+  padding: 10px;
+  margin: 0 5px;
+  background-color: #e0e0e0;
+  border: none;
+  cursor: pointer;
+}
+
+.section-tabs button.active {
+  background-color: #4a90e2;
+  color: white;
+}
+
+.language-toggle button {
+  margin: 5px;
+}
+
+.question-navigation-panel {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  justify-content: center;
+}
+
+.question-number {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 30px;
+  margin: 5px;
+  cursor: pointer;
+}
+
+.answered {
+  background-color: green;
+}
+
+.not-answered {
+  background-color: red;
+}
+
+.not-visited {
+  background-color: gray;
+}
+
+.marked-for-review {
+  background-color: purple;
+}
+
+.answered-marked-for-review {
+  background-color: blue;
+}
+
+.question-panel {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+
+.action-buttons button {
+  margin: 10px;
+  padding: 10px;
+}
+
+.submit-test {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.submit-test button {
+  padding: 10px 20px;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  cursor: pointer;
+}

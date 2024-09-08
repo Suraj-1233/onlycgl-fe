@@ -1,0 +1,105 @@
+/* General Page Styles */
+.choose-language-page {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    background-color: #f9f9f9;
+  }
+  
+  h1 {
+    color: #004aad;
+    text-align: center;
+  }
+  
+  p {
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  h3 {
+    margin-top: 20px;
+    color: #333;
+  }
+  
+  ol {
+    padding-left: 20px;
+    margin-bottom: 20px;
+  }
+  
+  li {
+    margin-bottom: 10px;
+  }
+  
+  /* Language Selection Section */
+  .choose-language-section {
+    margin: 20px 0;
+    text-align: center;
+  }
+  
+  .choose-language-section label {
+    font-size: 18px;
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  
+  .choose-language-section select {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  /* Declaration Section */
+  .declaration {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  .declaration input[type="checkbox"] {
+    margin-right: 10px;
+  }
+  
+  .declaration label {
+    font-size: 14px;
+    color: #555;
+  }
+  
+  /* Button Styles */
+  .button-group {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  .button-group .btn {
+    padding: 10px 20px;
+    background-color: #004aad;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .button-group .btn:hover {
+    background-color: #003580;
+  }
+  
+  /* Responsive Styles */
+  @media (max-width: 768px) {
+    .choose-language-page {
+      padding: 10px;
+    }
+  
+    h1 {
+      font-size: 24px;
+    }
+  
+    ol {
+      padding-left: 15px;
+    }
+  
+    .choose-language-section label, 
+    .choose-language-section select {
+      font-size: 14px;
+    }
+  }
+  
