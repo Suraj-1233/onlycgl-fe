@@ -8,6 +8,9 @@ import { TestInstructionsComponent } from './MockTest/test-instructions/test-ins
 import { HeaderComponent } from './MockTest/header/header.component';
 import { ChooseLanguageComponent } from './MockTest/choose-language/choose-language.component';
 import { QuestionPageComponent } from './MockTest/question-page/question-page.component';
+import { LoginComponent } from './Auth/login/login.component';
+import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -16,11 +19,15 @@ import { QuestionPageComponent } from './MockTest/question-page/question-page.co
     TestInstructionsComponent,
     HeaderComponent,
     ChooseLanguageComponent,
-    QuestionPageComponent
+    QuestionPageComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule, 
+    HttpClientModule, 
+    FormsModule // Add FormsModule to imports
+
   ],
   providers: [],
   bootstrap: [AppComponent]

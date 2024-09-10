@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MockTestService } from '../service/MockTestService';
 
 @Component({
   selector: 'app-mock-test',
@@ -234,22 +235,35 @@ export class MockTestComponent implements OnInit {
       }
     ]
   };
-
+  //  mockTest:any;
   currentQuestionIndex = 0;
   selectedAnswer: string | null = null;
-  timeLeft: number = this.mockTest.duration * 60; // Convert minutes to seconds
+   timeLeft!: number; // Convert minutes to seconds
   interval: any;
   subjectQuestions: any[] = [];
   subject: string = ''; // For filtering questions
   questionTimers: any = {}; // To track time spent on each question
   currentQuestionStartTime: number | null = null;
 
-  constructor() {}
+  constructor(private mockTestService: MockTestService) {} // Inject the service
 
   ngOnInit(): void {
-    this.subject = 'English Comprehension'; // Set default subject
-    this.initializeSubjectQuestions();
-    this.startTimer();
+    this.fetchMockTest(1); // Call the method to fetch mock test data by ID
+  }
+
+  fetchMockTest(mockTestId: number) {
+    this.mockTestService.getMockTest(mockTestId).subscribe(
+      (data) => {
+        //  this.mockTest = data;
+      this.timeLeft = this.mockTest.duration * 60; // Set timeLeft based on fetched data
+        this.subject = 'English Comprehension'; // Set default subject
+        this.initializeSubjectQuestions();
+        this.startTimer();
+      },
+      (error) => {
+        console.error('Error fetching mock test data', error);
+      }
+    );
   }
 
   initializeSubjectQuestions() {
