@@ -1,0 +1,10 @@
+<div>
+    <h2>Upload Mock Test File</h2>
+    <input type="file" (change)="onFileSelected($event)" />
+    <button (click)="uploadFile()">Upload File</button>
+    
+    <div *ngIf="uploadProgress !== null">
+      Upload Progress: {{ uploadProgress }}%
+    </div>
+  </div>
+  

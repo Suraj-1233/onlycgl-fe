@@ -6,6 +6,7 @@ import { TestInstructionsComponent } from './MockTest/test-instructions/test-ins
 import { ChooseLanguageComponent } from './MockTest/choose-language/choose-language.component';
 import { QuestionPageComponent } from './MockTest/question-page/question-page.component';
 import { LoginComponent } from './Auth/login/login.component';
+import { CreateMockTestComponent } from './Admin/modal/create-mock-test/create-mock-test.component';
 
 const routes: Routes = [
   { path: 'mock-test', component: MockTestComponent }, 
@@ -13,7 +14,9 @@ const routes: Routes = [
   { path: 'mock-test/choose-language', component: ChooseLanguageComponent },
   { path: 'mock-test/question-page', component: QuestionPageComponent }, // Route to question page
   { path: 'login', component: LoginComponent },
-  { path: '', redirectTo: '/login', pathMatch: 'full' }
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: 'mock-test/create', component: CreateMockTestComponent  },
+
 
 
 ];

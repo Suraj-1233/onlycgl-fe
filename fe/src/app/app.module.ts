@@ -11,6 +11,7 @@ import { QuestionPageComponent } from './MockTest/question-page/question-page.co
 import { LoginComponent } from './Auth/login/login.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { CreateMockTestComponent } from './Admin/modal/create-mock-test/create-mock-test.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { FormsModule } from '@angular/forms';
     HeaderComponent,
     ChooseLanguageComponent,
     QuestionPageComponent,
-    LoginComponent
+    LoginComponent,
+    CreateMockTestComponent
   ],
   imports: [
     BrowserModule,
