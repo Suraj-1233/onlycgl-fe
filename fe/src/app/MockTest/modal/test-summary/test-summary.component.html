@@ -1,0 +1,34 @@
+<div class="modal-container">
+  <h2>Test Summary</h2>
+  
+  <table>
+    <!-- Table Headers -->
+    <thead>
+      <tr>
+        <th>Subject</th>
+        <th>No. of Questions</th>
+        <th>Answered</th>
+        <th>Not Answered</th>
+        <th>Marked for Review</th>
+        <th>Not Visited</th>
+      </tr>
+    </thead>
+
+    <!-- Table Body -->
+    <tbody>
+      <tr *ngFor="let section of sections">
+        <td>{{ section.name }}</td>
+        <td>{{ section.questions }}</td>
+        <td>{{ section.answered }}</td>
+        <td>{{ section.notAnswered }}</td>
+        <td>{{ section.markedForReview }}</td>
+        <td>{{ section.notVisited }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="actions">
+    <button (click)="close()">Back to Test</button>
+    <button class="submit-button" (click)="submit()">Submit</button>
+  </div>
+</div>

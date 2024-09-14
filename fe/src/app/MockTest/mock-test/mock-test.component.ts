@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MockTestService } from '../service/MockTestService'; // If you are using a service, keep this
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { TestSummaryComponent } from '../modal/test-summary/test-summary.component';
 
 @Component({
   selector: 'app-mock-test',
@@ -717,7 +719,7 @@ export class MockTestComponent implements OnInit, OnDestroy {
   selectedLanguage: string = 'hi'; // Default language
   currentLanguage: string = this.selectedLanguage;
   availableLanguages: string[] = [];
-  constructor(private router: Router) {}
+  constructor(private router: Router , public dialog: MatDialog) {}
 
 
   ngOnInit(): void {
@@ -1049,8 +1051,6 @@ export class MockTestComponent implements OnInit, OnDestroy {
       response => response == true
     ).length;
 
-
-
   }
 
 
@@ -1058,4 +1058,63 @@ export class MockTestComponent implements OnInit, OnDestroy {
   navigate() {
     this.router.navigate(['mock-test/instructions']);
   }
+  openSummaryModal(): void {
+     const subjects = this.getUniqueSubjects();
+
+    // Loop through each subject and dynamically create the sections data
+     const sections = subjects.map(subject => ({
+      name: subject,
+      questions: this.getTotalQuestionsCountBySubject(subject),
+      answered: this.getAnsweredQuestionsCountBySubject(subject),
+      notAnswered: this.getNotAnsweredQuestionsCountBySubject(subject),
+      markedForReview: this.getMarkedForReviewQuestionsCountBySubject(subject),
+      notVisited: this.getNotVisitedQuestionsCountBySubject(subject)
+    }));
+
+    this.dialog.open(TestSummaryComponent , {
+      data: sections
+
+    }   
+    );
+  }
+  getUniqueSubjects(): string[] {
+    const subjectsSet = new Set<string>(this.mockTest.questions.map((q: any) => q.subject as string));
+    return Array.from(subjectsSet);
+  }
+  
+  
+
+  getAnsweredQuestionsCountBySubject(subject: string): number {
+    return this.mockTest.questions.filter(
+      (q: any) => q.subject === subject && this.userResponses[q.questionId]?.selectedOption !== null
+    ).length;
+  }
+  
+  getNotAnsweredQuestionsCountBySubject(subject: string): number {
+    const totalQuestions = this.getTotalQuestionsCountBySubject(subject);
+    const answeredQuestions = this.getAnsweredQuestionsCountBySubject(subject);
+    return totalQuestions - answeredQuestions;
+  }
+  
+  getMarkedForReviewQuestionsCountBySubject(subject: string): number {
+    return this.mockTest.questions.filter(
+      (q: any) => q.subject === subject && this.MarkQuestion[q.questionId]
+    ).length;
+  }
+  
+  getNotVisitedQuestionsCountBySubject(subject: string): number {
+    const totalQuestions = this.getTotalQuestionsCountBySubject(subject);
+    const visitedQuestions = this.mockTest.questions.filter(
+      (q: any) => q.subject === subject && this.userResponses.hasOwnProperty(q.questionId)
+    ).length;
+    return totalQuestions - visitedQuestions;
+  }
+  
+  getTotalQuestionsCountBySubject(subject: string): number {
+    return this.mockTest.questions.filter((q: any) => q.subject === subject).length;
+  }
+  
+ 
+  
+  
 }

@@ -14,9 +14,14 @@ import { HttpClientModule } from '@angular/common/http';
 import { CreateMockTestComponent } from './Admin/modal/create-mock-test/create-mock-test.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTableModule } from '@angular/material/table';
+import { TestSummaryComponent } from './MockTest/modal/test-summary/test-summary.component';
 
 @NgModule({
   declarations: [
+   
     AppComponent,
     MockTestComponent,
     TestInstructionsComponent,
@@ -24,7 +29,8 @@ import { MatRadioModule } from '@angular/material/radio';
     ChooseLanguageComponent,
     QuestionPageComponent,
     LoginComponent,
-    CreateMockTestComponent
+    CreateMockTestComponent,
+    TestSummaryComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +38,10 @@ import { MatRadioModule } from '@angular/material/radio';
     HttpClientModule, 
     MatRadioModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatTableModule,
 
 
   ],
