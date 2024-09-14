@@ -694,7 +694,7 @@ export class MockTestComponent implements OnInit, OnDestroy {
         ]
       }
     ]
-  };    
+  };
 
   currentQuestionIndex: number = 0;
   selectedAnswer: string | null = null;
@@ -703,17 +703,24 @@ export class MockTestComponent implements OnInit, OnDestroy {
   subjectQuestions: any[] = []; // Questions filtered by subject
   currentQuestionStartTime: number | null = null; // Tracks the start time for the current question
   questionTimers: { [subject: string]: { [questionId: number]: { startTime: number | null, timeSpent: number } } } = {}; // Time tracking for each question
-  userResponses: { [questionId: number]: { selectedOption: string | null, timeTaken: number, isCorrect: boolean, marksAwarded: number } } = {};
+  userResponses: {
+    [questionId: number]: {
+      selectedOption: string | null, timeTaken: number, isCorrect: boolean, marksAwarded: number
+    }
+  } = {};
+
+  MarkQuestion: { [questionId: number]: boolean } = {}; // New object for tracking marked questions
 
   subject: string = 'General Knowledge'; // Default subject
   activeSubject: string = this.subject; // Active subject for styling
   selectedLanguage: string = 'hi'; // Default language
-  currentLanguage:string =this.selectedLanguage;
+  currentLanguage: string = this.selectedLanguage;
   availableLanguages: string[] = [];
 
-  ngOnInit(): void { 
+  ngOnInit(): void {
+
+    console.log(this.userResponses)
     this.extractLanguages()
-    // Set default subject
     this.initializeSubjectQuestions(); // Initialize questions for the current subject
     this.timeLeft = this.mockTest.duration * 60; // Convert duration to seconds
     this.startTimer(); // Start the test timer
@@ -725,6 +732,13 @@ export class MockTestComponent implements OnInit, OnDestroy {
     }
     console.log(this.questionTimers, "Timer data"); // Log timer data for reference
   }
+
+
+
+
+
+
+
 
   // Initialize questions based on the selected subject
   initializeSubjectQuestions() {
@@ -744,7 +758,7 @@ export class MockTestComponent implements OnInit, OnDestroy {
 
   extractLanguages() {
     const languageSet = new Set<string>(); // Using a Set to ensure uniqueness
-    
+
     this.mockTest.questions.forEach((question: any) => {
       question.translations.forEach((translation: { languageCode: string; }) => {
         languageSet.add(translation.languageCode);
@@ -757,14 +771,14 @@ export class MockTestComponent implements OnInit, OnDestroy {
 
 
 
-  changeQuestionLanguage( event: Event) {
+  changeQuestionLanguage(event: Event) {
     const selectElement = event.target as HTMLSelectElement;
 
     this.currentLanguage = selectElement.value;
   }
   getCurrentQuestion() {
 
-          return this.subjectQuestions[this.currentQuestionIndex]?.translations.find((t: any) => t.languageCode === this.currentLanguage) || this.subjectQuestions[this.currentQuestionIndex]?.translations.find((t: any) => t.languageCode === this.selectedLanguage);
+    return this.subjectQuestions[this.currentQuestionIndex]?.translations.find((t: any) => t.languageCode === this.currentLanguage) || this.subjectQuestions[this.currentQuestionIndex]?.translations.find((t: any) => t.languageCode === this.selectedLanguage);
   }
   getCurrentQuestionId() {
     return this.subjectQuestions[this.currentQuestionIndex]?.questionId;
@@ -779,14 +793,13 @@ export class MockTestComponent implements OnInit, OnDestroy {
         selectedOption: option,
         timeTaken: this.getQuestionTime(questionId) / 1000, // Convert to seconds
         isCorrect: this.isAnswerCorrect(questionId, option),
-        marksAwarded: this.getMarksAwarded(questionId, option)
+        marksAwarded: this.getMarksAwarded(questionId, option),
       };
-    
-  }
+
+    }
   }
 
   clearResponse() {
-    debugger
     this.selectedAnswer = null; // Clear the selected answer
     const questionId = this.getCurrentQuestionId();
     if (questionId !== undefined) {
@@ -804,9 +817,11 @@ export class MockTestComponent implements OnInit, OnDestroy {
         selectedOption: this.selectedAnswer,
         timeTaken: this.getQuestionTime(currentQuestionId) / 1000,
         isCorrect: this.isAnswerCorrect(currentQuestionId, this.selectedAnswer || ''),
-        marksAwarded: this.getMarksAwarded(currentQuestionId, this.selectedAnswer || '')
+        marksAwarded: this.getMarksAwarded(currentQuestionId, this.selectedAnswer || ''),
+
+
       };
-    
+
     }
     this.selectedAnswer = null; // Clear the selected answer for the next question
 
@@ -828,38 +843,44 @@ export class MockTestComponent implements OnInit, OnDestroy {
       }
     }
 
-    
+
   }
 
+  getAnsweredQuestionsCount(): number {
+    return Object.values(this.userResponses).filter(
+      response => response.selectedOption !== null
+    ).length;
+  }
   getNextSubject(): string {
     const subjects = ['General Knowledge', 'Mathematics', 'English Comprehension', 'Quantitative Aptitude'];
     const currentIndex = subjects.indexOf(this.subject);
-  
+
     if (currentIndex !== -1 && currentIndex < subjects.length - 1) {
       return subjects[currentIndex + 1]; // Return the next subject
     } else {
       return subjects[0]; // Loop back to the first subject
     }
   }
-  
+
 
   // Handle switching to a selected question (from the sidebar)
   selectQuestion(index: number) {
     if (index < this.subjectQuestions.length) {
       this.stopQuestionTimer(); // Stop the current question timer
       const currentQuestionId = this.getCurrentQuestionId();
-      if (currentQuestionId !== undefined  ) {
-      
+      if (currentQuestionId !== undefined) {
+
         this.userResponses[currentQuestionId] = {
           selectedOption: this.selectedAnswer,
           timeTaken: this.getQuestionTime(currentQuestionId) / 1000,
           isCorrect: this.isAnswerCorrect(currentQuestionId, this.selectedAnswer || ''),
-          marksAwarded: this.getMarksAwarded(currentQuestionId, this.selectedAnswer || '')
+          marksAwarded: this.getMarksAwarded(currentQuestionId, this.selectedAnswer || ''),
+
         };
-      
+
       }
       this.currentQuestionIndex = index;
-       this.selectedAnswer = this.userResponses[this.getCurrentQuestionId()]?.selectedOption || null;
+      this.selectedAnswer = this.userResponses[this.getCurrentQuestionId()]?.selectedOption || null;
       // this.selectedAnswer = selectedAnswer;
       this.startQuestionTimer(); // Start the timer for the selected question
     }
@@ -971,6 +992,9 @@ export class MockTestComponent implements OnInit, OnDestroy {
     if (this.userResponses[questionId] && this.userResponses[questionId].selectedOption !== null) {
       return 'answered'; // Class for answered questions
     }
+    if (this.MarkQuestion[questionId]!=undefined) {
+      return 'marked-for-review'; // Class for marked-for-review questions
+    }
 
     return 'unanswered'; // Class for unanswered questions
   }
@@ -980,8 +1004,32 @@ export class MockTestComponent implements OnInit, OnDestroy {
   }
 
 
+  MarkedForReview() {
+    const questionId = this.getCurrentQuestionId();
+    if (questionId !== undefined) {
+      if (this.MarkQuestion[questionId]) {
+        this.MarkQuestion[questionId] = !this.MarkQuestion[questionId];
+      }
+      else {
+        this.MarkQuestion[questionId] = true;
+      }
+
+
+    }
+  }
+
+  getNotAnsweredQuestionsCount() {
+    return Object.keys(this.mockTest.questions).length - this.getAnsweredQuestionsCount()
+  }
+  getNotVisitedQuestionsCount() {
+    return Object.keys(this.mockTest.questions).length - Object.keys(this.userResponses).length
+  }
+  getMarkedForReviewQuestionsCount() {
+    return Object.values(this.MarkQuestion).filter(
+      response => response == true
+    ).length;
 
 
 
-
+  }
 }

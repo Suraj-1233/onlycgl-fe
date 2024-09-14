@@ -56,20 +56,54 @@
           <button (click)="clearResponse()">Clear Response</button>
           <button (click)="saveAndNext()">Save & Next</button>
           <button (click)="submitTest()">Submit Test</button>
+          <button (click)="MarkedForReview()">Mark For Review</button>
+
         </div>
       </div>
   
-      <div class="sidebar-navigation">
-        <h3>Question Numbers</h3>
-        <div class="question-buttons">
-          <button
-            *ngFor="let question of subjectQuestions; let i = index"
-            [ngClass]="getQuestionStatus(i)"
-            (click)="selectQuestion(i)"
-          >
-            {{ i + 1 }}
-          </button>
-        </div>
-      </div>
+      <div class="sidebar-navigation ">
+
+        <div style="display: flex; justify-content: space-between; gap: 10px;">
+          <div style="display: flex; align-items: center;">
+            <button class="question-buttons">{{ getAnsweredQuestionsCount() }}</button>
+            <label>Answered</label>
+          </div>
+          
+          <div style="display: flex; align-items: center;">
+            <button class="question-buttons">{{ getMarkedForReviewQuestionsCount() }}</button>
+            <label>Mark for Review</label>
+          </div>
+          <div style="display: flex; align-items: center;">
+            <button class="question-buttons">{{ getNotVisitedQuestionsCount() }}</button>
+            <label>Not Visited</label>
+          </div>
+          
+          <div style="display: flex; align-items: center;">
+            <button class="question-buttons">{{ getNotAnsweredQuestionsCount() }}</button>
+            <label>Not Answered</label>
+          </div>
+          
+          <div style="display: flex; align-items: center;">
+            <button class="question-buttons">{{ getNotVisitedQuestionsCount() }}</button>
+            <label>Not Visited</label>
+          </div>
+    </div>
+    
+         <div>
+            <h3>Question Numbers</h3>
+            <div class="question-buttons">
+            
+          <button
+                *ngFor="let question of subjectQuestions; let i = index"
+                [ngClass]="getQuestionStatus(i)"
+                (click)="selectQuestion(i)"
+              >
+                {{ i + 1 }}
+              </button>
+            </div>
+          </div>
+     
+
+    </div>
     </div>
 </div>
