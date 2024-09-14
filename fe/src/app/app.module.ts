@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -10,8 +11,9 @@ import { ChooseLanguageComponent } from './MockTest/choose-language/choose-langu
 import { QuestionPageComponent } from './MockTest/question-page/question-page.component';
 import { LoginComponent } from './Auth/login/login.component';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
 import { CreateMockTestComponent } from './Admin/modal/create-mock-test/create-mock-test.component';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { MatRadioModule } from '@angular/material/radio';
 
 @NgModule({
   declarations: [
@@ -28,10 +30,15 @@ import { CreateMockTestComponent } from './Admin/modal/create-mock-test/create-m
     BrowserModule,
     AppRoutingModule, 
     HttpClientModule, 
-    FormsModule // Add FormsModule to imports
+    MatRadioModule,
+    FormsModule,
+    ReactiveFormsModule
+
 
   ],
-  providers: [],
+  providers: [
+    provideAnimationsAsync()
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

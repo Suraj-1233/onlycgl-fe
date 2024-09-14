@@ -109,7 +109,7 @@ body {
   height: 40px;
   border: none;
   border-radius: 50%;
-  background-color: #28a745;
+  background-color: #151615;
   color: white;
   font-size: 16px;
   cursor: pointer;
@@ -184,3 +184,47 @@ body {
       width: 100%;
   }
 }
+/* Answered Questions */
+.answered {
+  background-color: #28a745 !important; /* Green */
+  border: 2px solid #218838 !important;
+}
+
+/* Unanswered Questions */
+.unanswered {
+  background-color: #dc3545 !important; /* Red */
+  border: 2px solid #c82333 !important;
+}
+
+/* Active Question */
+.active-question {
+  background-color: #007bff !important; /* Blue */
+  border: 2px solid #0056b3 !important;
+}
+.active-subject {
+  background-color: #ffc107; /* Yellow for active subject */
+  color: black;
+}
+
+/* General subject button styling */
+.section-navigation button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.section-navigation button:hover {
+  background-color: #949fab;
+  outline: 3px solid #0056b3;
+}
+
+/* Active subject button */
+.section-navigation button.active-subject {
+  background-color: #ffc107;
+  color: black;
+}
+

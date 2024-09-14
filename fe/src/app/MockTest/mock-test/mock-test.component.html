@@ -1,19 +1,17 @@
 <div class="mock-test-container">
     <div class="header"> 
-
       <h1>{{ mockTest?.title }}</h1>
       <div class="test-info">
         <p>Time Left: {{ getFormattedTime() }}</p>
       </div>
     </div>
   
-  
-    <div class="section-navigation">
-      <button (click)="filterBySubject('General Knowledge')">General Knowledge</button>
-      <button (click)="filterBySubject('Mathematics')">Mathematics</button>
-      <button (click)="filterBySubject('English Comprehension')">English Comprehension</button>
-      <button (click)="filterBySubject('Quantitative Aptitude')">Quantitative Aptitude</button>
-    </div>
+     <div class="section-navigation">
+        <button [ngClass]="isActiveSubject('General Knowledge')" (click)="filterBySubject('General Knowledge')">General Knowledge</button>
+        <button [ngClass]="isActiveSubject('Mathematics')" (click)="filterBySubject('Mathematics')">Mathematics</button>
+        <button [ngClass]="isActiveSubject('English Comprehension')" (click)="filterBySubject('English Comprehension')">English Comprehension</button>
+        <button [ngClass]="isActiveSubject('Quantitative Aptitude')" (click)="filterBySubject('Quantitative Aptitude')">Quantitative Aptitude</button>
+      </div>
   
     <div class="content-area">
       <div class="question-panel">
@@ -21,59 +19,43 @@
           <h3>Question No: {{ currentQuestionIndex + 1 }}</h3>
           <p>Marks: {{ getCurrentQuestion()?.marks }}</p>
           <p>Time: {{ getFormattedQuestionTime(getCurrentQuestionId()) }}</p>
+          <div class="language-selector">
+            <label for="question-language">Language</label>
+            <select id="question-language"  [(ngModel)]="currentLanguage" (change)="changeQuestionLanguage($event)">
+              <option *ngFor="let lang of availableLanguages" [value]="lang">{{ lang }}</option>
+            </select>
+          </div>
         </div>
   
-        <div class="question-content" *ngIf="subjectQuestions.length > 0">
-          <p>{{ getCurrentQuestion()?.questionText }}</p>
-          <ul class="options-list">
-            <li>
-              <input
-                type="radio"
-                name="option"
-                value="A"
-                [checked]="selectedAnswer === 'A'"
-                (change)="selectOption('A')"
-              />
-              {{ getCurrentQuestion()?.optionA }}
-            </li>
-            <li>
-              <input
-                type="radio"
-                name="option"
-                value="B"
-                [checked]="selectedAnswer === 'B'"
-                (change)="selectOption('B')"
-              />
-              {{ getCurrentQuestion()?.optionB }}
-            </li>
-            <li>
-              <input
-                type="radio"
-                name="option"
-                value="C"
-                [checked]="selectedAnswer === 'C'"
-                (change)="selectOption('C')"
-              />
-              {{ getCurrentQuestion()?.optionC }}
-            </li>
-            <li>
-              <input
-                type="radio"
-                name="option"
-                value="D"
-                [checked]="selectedAnswer === 'D'"
-                (change)="selectOption('D')"
-              />
-              {{ getCurrentQuestion()?.optionD }}
-            </li>
-          </ul>
-        </div>
-        <p *ngIf="subjectQuestions.length === 0">No questions available for this subject.</p>
+      <div class="question-content" *ngIf="subjectQuestions.length > 0">
+      <p>{{ getCurrentQuestion()?.questionText }}</p>
+  
+      <mat-radio-group
+        aria-label="Select an option"
+        [(ngModel)]="selectedAnswer"
+        (ngModelChange)="selectOption($event)"
+      >
+        <mat-radio-button *ngIf="getCurrentQuestion()?.optionA" [value]="'A'">
+          {{ getCurrentQuestion()?.optionA }}
+        </mat-radio-button>
+        <mat-radio-button *ngIf="getCurrentQuestion()?.optionB" [value]="'B'">
+          {{ getCurrentQuestion()?.optionB }}
+        </mat-radio-button>
+        <mat-radio-button *ngIf="getCurrentQuestion()?.optionC" [value]="'C'">
+          {{ getCurrentQuestion()?.optionC }}
+        </mat-radio-button>
+        <mat-radio-button *ngIf="getCurrentQuestion()?.optionD" [value]="'D'">
+          {{ getCurrentQuestion()?.optionD }}
+        </mat-radio-button>
+      </mat-radio-group>
+    </div>
+  
+    <p *ngIf="subjectQuestions.length === 0">No questions available for this subject.</p>
   
         <div class="action-buttons">
           <button (click)="clearResponse()">Clear Response</button>
-          <button (click)="markForReview()">Mark for Review</button>
           <button (click)="saveAndNext()">Save & Next</button>
+          <button (click)="submitTest()">Submit Test</button>
         </div>
       </div>
   
@@ -90,5 +72,4 @@
         </div>
       </div>
     </div>
-  </div>
-  
+</div>
