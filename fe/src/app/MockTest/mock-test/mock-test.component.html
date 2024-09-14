@@ -63,31 +63,28 @@
   
       <div class="sidebar-navigation ">
 
-        <div style="display: flex; justify-content: space-between; gap: 10px;">
-          <div style="display: flex; align-items: center;">
-            <button class="question-buttons">{{ getAnsweredQuestionsCount() }}</button>
-            <label>Answered</label>
-          </div>
-          
-          <div style="display: flex; align-items: center;">
-            <button class="question-buttons">{{ getMarkedForReviewQuestionsCount() }}</button>
-            <label>Mark for Review</label>
-          </div>
-          <div style="display: flex; align-items: center;">
-            <button class="question-buttons">{{ getNotVisitedQuestionsCount() }}</button>
-            <label>Not Visited</label>
-          </div>
-          
-          <div style="display: flex; align-items: center;">
-            <button class="question-buttons">{{ getNotAnsweredQuestionsCount() }}</button>
-            <label>Not Answered</label>
-          </div>
-          
-          <div style="display: flex; align-items: center;">
-            <button class="question-buttons">{{ getNotVisitedQuestionsCount() }}</button>
-            <label>Not Visited</label>
-          </div>
+    <div class="question-status-container">
+      <div class="question-status-item">
+        <button class="status-button">{{ getAnsweredQuestionsCount() }}</button>
+        <label>Answered</label>
+      </div>
+    
+      <div class="question-status-item">
+        <button class="status-button">{{ getMarkedForReviewQuestionsCount() }}</button>
+        <label>Mark for Review And Next</label>
+      </div>
+    
+      <div class="question-status-item">
+        <button class="status-button">{{ getNotAnsweredQuestionsCount() }}</button>
+        <label>Not Answered</label>
+      </div>
+    
+      <div class="question-status-item">
+        <button class="status-button">{{ getNotVisitedQuestionsCount() }}</button>
+        <label>Not Visited</label>
+      </div>
     </div>
+    
     
          <div>
             <h3>Question Numbers</h3>

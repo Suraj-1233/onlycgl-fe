@@ -1016,6 +1016,23 @@ export class MockTestComponent implements OnInit, OnDestroy {
 
 
     }
+
+     // Move to the next question
+     if (this.currentQuestionIndex < this.subjectQuestions.length - 1) {
+      this.currentQuestionIndex++;
+      this.startQuestionTimer(); // Start the timer for the next question
+    }
+    else {
+      // Move to the next subject if the current subject's questions are exhausted
+      const nextSubject = this.getNextSubject();
+      if (nextSubject) {
+        this.filterBySubject(nextSubject); // Switch to the next subject
+        this.currentQuestionIndex = 0; // Start from the first question of the new subject
+        this.startQuestionTimer(); // Start the timer for the new question
+      } 
+    }
+
+
   }
 
   getNotAnsweredQuestionsCount() {
