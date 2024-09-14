@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MockTestService } from '../service/MockTestService'; // If you are using a service, keep this
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-mock-test',
@@ -716,6 +717,8 @@ export class MockTestComponent implements OnInit, OnDestroy {
   selectedLanguage: string = 'hi'; // Default language
   currentLanguage: string = this.selectedLanguage;
   availableLanguages: string[] = [];
+  constructor(private router: Router) {}
+
 
   ngOnInit(): void {
 
@@ -1048,5 +1051,11 @@ export class MockTestComponent implements OnInit, OnDestroy {
 
 
 
+  }
+
+
+
+  navigate() {
+    this.router.navigate(['mock-test/instructions']);
   }
 }
