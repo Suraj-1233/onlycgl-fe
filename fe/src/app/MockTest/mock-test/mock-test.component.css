@@ -236,3 +236,30 @@ body {
 
     
 }
+/* Marked for Review Questions */
+.marked-for-review {
+  background-color: rgb(240, 240, 14) !important; /* Highlight for marked questions */
+  border: 2px solid #f9a825 !important; /* Border for marked questions */
+}
+
+/* Marked for Review Only Questions */
+.marked-for-review-only {
+  background-color: #e8135a !important; /* Light pink background */
+  border: 2px solid #ec407a !important; /* Pink border */
+}
+
+/* Unanswered Questions */
+.unanswered {
+  background-color: #f5f5f5 !important; /* Light gray background */
+  border: 2px solid #e0e0e0 !important; /* Light gray border */
+}
+
+/* Not Visited Questions */
+.not-visited {
+  background-color: #ffffff !important; /* White background for not-visited questions */
+  border: 2px solid #bdbdbd !important; /* Gray border */
+}
+
+.saved-and-marked-for-review {
+  background-color: #1cd57feb !important;
+}

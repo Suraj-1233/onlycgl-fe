@@ -56,8 +56,10 @@
             <div class="action-buttons">
                 <button (click)="clearResponse()">Clear Response</button>
                 <button (click)="saveAndNext()">Save & Next</button>
-                <button (click)="submitTest()">Submit Test</button>
-                <button (click)="MarkedForReview()">Mark For Review</button>
+        <!--         <button (click)="submitTest()">Submit Test</button> -->
+                <button (click)="MarkForReviewAndNext()">Mark for Review And Next</button>
+                <button (click)="saveAndMarkForReview()">Save and Mark For Review</button>
+
 
               </div>
          
@@ -75,7 +77,10 @@
           <button class="status-button">{{ getMarkedForReviewQuestionsCount() }}</button>
           <label>Mark for Review And Next</label>
         </div>
-
+        <div class="question-status-item">
+          <button class="status-button">{{ getSaveAndMarkedForReviewQuestionsCount() }}</button>
+          <label>Save And Mark for Review </label>
+        </div>
         <div class="question-status-item">
           <button class="status-button">{{ getNotAnsweredQuestionsCount() }}</button>
           <label>Not Answered</label>
@@ -102,8 +107,8 @@
 
     </div>
       </div>
-    <button (click)="openSummaryModal()">Submit Test</button>
-    <button  (click)="navigate()">instructions</button>
+    <button (click)="openSummaryModal()">Submit Test</button>
+        <button  (click)="navigate()">instructions</button>
 
 
 </div>

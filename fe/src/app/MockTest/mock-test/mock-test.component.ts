@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { MockTestService } from '../service/MockTestService'; // If you are using a service, keep this
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
@@ -39,7 +39,7 @@ export class MockTestComponent implements OnInit, OnDestroy {
           {
             "translationId": 2,
             "languageCode": "hi",
-            "questionText": "5 + 3 का परिणाम क्या है?",
+            "questionText": "5 + 3 का परिणाम क्या है? m",
             "optionA": "8",
             "optionB": "6",
             "optionC": "7",
@@ -61,7 +61,7 @@ export class MockTestComponent implements OnInit, OnDestroy {
           {
             "translationId": 3,
             "languageCode": "en",
-            "questionText": "What does the word 'ubiquitous' mean?",
+            "questionText": "What does the word 'ubiquitous' mean? ",
             "optionA": "Widespread",
             "optionB": "Unique",
             "optionC": "Obscure",
@@ -73,7 +73,7 @@ export class MockTestComponent implements OnInit, OnDestroy {
           {
             "translationId": 4,
             "languageCode": "hi",
-            "questionText": "'Ubiquitous' शब्द का क्या अर्थ है?",
+            "questionText": "'Ubiquitous' शब्द का क्या अर्थ है? e",
             "optionA": "व्यापक",
             "optionB": "विशेष",
             "optionC": "अज्ञात",
@@ -107,7 +107,7 @@ export class MockTestComponent implements OnInit, OnDestroy {
           {
             "translationId": 6,
             "languageCode": "hi",
-            "questionText": "x के लिए हल करें: 2x - 4 = 10",
+            "questionText": "x के लिए हल करें: 2x - 4 = 10 q",
             "optionA": "7",
             "optionB": "6",
             "optionC": "5",
@@ -141,7 +141,7 @@ export class MockTestComponent implements OnInit, OnDestroy {
           {
             "translationId": 8,
             "languageCode": "hi",
-            "questionText": "कौन सी नदी दुनिया की सबसे लंबी नदी के रूप में जानी जाती है?",
+            "questionText": "कौन सी नदी दुनिया की सबसे लंबी नदी के रूप में जानी जाती है? G",
             "optionA": "नील",
             "optionB": "अमेज़न",
             "optionC": "यांग्त्ज़े",
@@ -712,14 +712,18 @@ export class MockTestComponent implements OnInit, OnDestroy {
     }
   } = {};
 
-  MarkQuestion: { [questionId: number]: boolean } = {}; // New object for tracking marked questions
+  visitedQuestions: { [questionId: number]: boolean } = {};
+  markedForReviewAnswers: { [questionId: number]: any } = {};
+  saveAndMarkForReviewAnswers: { [questionId: number]: any } = {};
+
 
   subject: string = 'General Knowledge'; // Default subject
   activeSubject: string = this.subject; // Active subject for styling
   selectedLanguage: string = 'hi'; // Default language
   currentLanguage: string = this.selectedLanguage;
   availableLanguages: string[] = [];
-  constructor(private router: Router , public dialog: MatDialog) {}
+  constructor(private router: Router, public dialog: MatDialog, private cdr: ChangeDetectorRef // Inject ChangeDetectorRef
+  ) { }
 
 
   ngOnInit(): void {
@@ -729,6 +733,7 @@ export class MockTestComponent implements OnInit, OnDestroy {
     this.initializeSubjectQuestions(); // Initialize questions for the current subject
     this.timeLeft = this.mockTest.duration * 60; // Convert duration to seconds
     this.startTimer(); // Start the test timer
+    console.log(this.visitedQuestions)
   }
 
   ngOnDestroy(): void {
@@ -737,24 +742,23 @@ export class MockTestComponent implements OnInit, OnDestroy {
     }
     console.log(this.questionTimers, "Timer data"); // Log timer data for reference
   }
-
-
-
-
-
-
-
-
   // Initialize questions based on the selected subject
   initializeSubjectQuestions() {
     this.subjectQuestions = this.mockTest.questions.filter((q: any) => q.subject === this.subject);
-    console.log(this.subjectQuestions, " queston subject")
     this.currentQuestionIndex = 0; // Reset index to the first question
     this.stopQuestionTimer(); // Stop timer if running
     if (this.subjectQuestions.length > 0) {
       this.startQuestionTimer(); // Start timer for the first question
+      const currentQuestionId = this.getCurrentQuestionId();
+      this.visitedQuestions[currentQuestionId] = true; // Mark the first question as visited
+      this.setSelectedValue();
+
+      // Restore the selected answer from previous responses if available
+
     }
+    console.log(this.subjectQuestions)
   }
+
 
   // getCurrentQuestion() {
   //   return this.subjectQuestions[this.currentQuestionIndex]?.translations[0]; // Assume English translation
@@ -773,9 +777,6 @@ export class MockTestComponent implements OnInit, OnDestroy {
     this.availableLanguages = Array.from(languageSet);
     console.log(this.availableLanguages); // e.g., ['en', 'hi']
   }
-
-
-
   changeQuestionLanguage(event: Event) {
     const selectElement = event.target as HTMLSelectElement;
 
@@ -793,15 +794,17 @@ export class MockTestComponent implements OnInit, OnDestroy {
   selectOption(option: string) {
     this.selectedAnswer = option;
     const questionId = this.getCurrentQuestionId();
-    if (questionId !== undefined) {
-      this.userResponses[questionId] = {
-        selectedOption: option,
-        timeTaken: this.getQuestionTime(questionId) / 1000, // Convert to seconds
-        isCorrect: this.isAnswerCorrect(questionId, option),
-        marksAwarded: this.getMarksAwarded(questionId, option),
-      };
+    this.visitedQuestions[questionId] = true;
 
-    }
+    // if (questionId !== undefined) {
+    //   this.userResponses[questionId] = {
+    //     selectedOption: option,
+    //     timeTaken: this.getQuestionTime(questionId) / 1000, // Convert to seconds
+    //     isCorrect: this.isAnswerCorrect(questionId, option),
+    //     marksAwarded: this.getMarksAwarded(questionId, option),
+    //   };
+
+    // }
   }
 
   clearResponse() {
@@ -814,25 +817,40 @@ export class MockTestComponent implements OnInit, OnDestroy {
 
   // Handle "Save and Next" button logic
   saveAndNext() {
-    this.stopQuestionTimer(); // Stop timer for the current question
+    debugger
+
+    this.stopQuestionTimer();
+    // Stop timer for the current question
+    this.saveCurrentQuestionVisitStatus();
+
     const currentQuestionId = this.getCurrentQuestionId();
     if (currentQuestionId !== undefined) {
+      this.visitedQuestions[currentQuestionId] = true;
+      if (this.selectedAnswer === null ||  this.selectedAnswer === undefined) {
+        alert(" Please choose an option ")
+        return
+      }
       // Save the user's response
       this.userResponses[currentQuestionId] = {
         selectedOption: this.selectedAnswer,
         timeTaken: this.getQuestionTime(currentQuestionId) / 1000,
         isCorrect: this.isAnswerCorrect(currentQuestionId, this.selectedAnswer || ''),
         marksAwarded: this.getMarksAwarded(currentQuestionId, this.selectedAnswer || ''),
-
-
       };
 
     }
-    this.selectedAnswer = null; // Clear the selected answer for the next question
 
+    this.selectedAnswer = null; // Clear the selected answer for the next question
+    delete this.markedForReviewAnswers[currentQuestionId];
+    delete this.saveAndMarkForReviewAnswers[currentQuestionId];
     // Move to the next question
     if (this.currentQuestionIndex < this.subjectQuestions.length - 1) {
       this.currentQuestionIndex++;
+      const currentQuestionId = this.getCurrentQuestionId();
+      this.visitedQuestions[currentQuestionId] = true;
+
+      this.setSelectedValue();
+
       this.startQuestionTimer(); // Start the timer for the next question
     }
     else {
@@ -842,9 +860,6 @@ export class MockTestComponent implements OnInit, OnDestroy {
         this.filterBySubject(nextSubject); // Switch to the next subject
         this.currentQuestionIndex = 0; // Start from the first question of the new subject
         this.startQuestionTimer(); // Start the timer for the new question
-      } else {
-        // Handle the case where there are no more subjects left (e.g., end the test)
-        this.submitTest();
       }
     }
 
@@ -868,34 +883,44 @@ export class MockTestComponent implements OnInit, OnDestroy {
   }
 
 
-  // Handle switching to a selected question (from the sidebar)
   selectQuestion(index: number) {
     if (index < this.subjectQuestions.length) {
+
       this.stopQuestionTimer(); // Stop the current question timer
       const currentQuestionId = this.getCurrentQuestionId();
+      this.visitedQuestions[currentQuestionId] = true;
+
+      // Save the user's response for the current question
       if (currentQuestionId !== undefined) {
-
-        this.userResponses[currentQuestionId] = {
-          selectedOption: this.selectedAnswer,
-          timeTaken: this.getQuestionTime(currentQuestionId) / 1000,
-          isCorrect: this.isAnswerCorrect(currentQuestionId, this.selectedAnswer || ''),
-          marksAwarded: this.getMarksAwarded(currentQuestionId, this.selectedAnswer || ''),
-
-        };
-
+        this.visitedQuestions[currentQuestionId] = true;
       }
+
+      // Update the index to the newly selected question
       this.currentQuestionIndex = index;
-      this.selectedAnswer = this.userResponses[this.getCurrentQuestionId()]?.selectedOption || null;
-      // this.selectedAnswer = selectedAnswer;
-      this.startQuestionTimer(); // Start the timer for the selected question
+
+      // Restore the selected answer for the newly selected question
+      const newQuestionId = this.getCurrentQuestionId();
+      this.visitedQuestions[newQuestionId] = true;
+        debugger
+      this.setSelectedValue();
+
+
+      // Start the timer for the newly selected question
+      this.startQuestionTimer();
     }
+    console.log(this.visitedQuestions)
+
   }
+
+
 
   // Test timer management
   startTimer() {
     this.interval = setInterval(() => {
       if (this.timeLeft > 0) {
         this.timeLeft--;
+        this.cdr.detectChanges(); // Manually trigger change detection
+
       } else {
         clearInterval(this.interval);
         this.submitTest(); // Automatically submit the test if time runs out
@@ -957,6 +982,7 @@ export class MockTestComponent implements OnInit, OnDestroy {
         marksAwarded
       };
     });
+    console.log(this.userResponses, " ha bha ")
 
     const result = {
       userId: 20, // Replace with actual user ID
@@ -989,67 +1015,78 @@ export class MockTestComponent implements OnInit, OnDestroy {
   }
   getQuestionStatus(index: number): string {
     const questionId = this.subjectQuestions[index]?.questionId;
-
+    
+    // Check if the question has been visited
+    const isVisited = this.visitedQuestions.hasOwnProperty(questionId);
+    
+    // Check if the question has been marked for review and saved
+    const hasSavedAndMarkedForReview = this.saveAndMarkForReviewAnswers.hasOwnProperty(questionId);
+    
+    // Check if the question is marked for review but not saved
+    const hasMarkedForReview = this.markedForReviewAnswers.hasOwnProperty(questionId);
+    
+    // Check if the question has been answered by the user
+    const hasAnswered = this.userResponses[questionId]?.selectedOption !== null && 
+                        this.userResponses[questionId]?.selectedOption !== undefined;
+  
+    // Check if the question is the currently active one
     if (questionId === this.getCurrentQuestionId()) {
       return 'active-question'; // Class for the current active question
     }
-
-    if (this.userResponses[questionId] && this.userResponses[questionId].selectedOption !== null) {
+  
+    // If the question has been both marked for review and saved
+    if (hasSavedAndMarkedForReview) {
+      return 'saved-and-marked-for-review'; // Class for saved and marked for review questions
+    }
+  
+    // If the question is marked for review but not necessarily saved
+    if (hasMarkedForReview) {
+      return 'marked-for-review-only'; // Class for questions marked for review but not saved
+    }
+  
+    // If the question has been answered
+    if (hasAnswered) {
       return 'answered'; // Class for answered questions
     }
-    if (this.MarkQuestion[questionId]!=undefined) {
-      return 'marked-for-review'; // Class for marked-for-review questions
+  
+    // If the question has been visited but not answered
+    if (isVisited && !hasAnswered) {
+      return 'visited-unanswered'; // Class for visited but unanswered questions
     }
-
-    return 'unanswered'; // Class for unanswered questions
+  
+    // If the question has neither been visited, answered, nor marked
+    if (!isVisited && !hasAnswered && !hasMarkedForReview && !hasSavedAndMarkedForReview) {
+      return 'not-visited'; // Class for not-visited questions
+    }
+  
+    // Default case for unanswered questions
+    return 'unanswered'; // Class for unanswered questions if none of the above conditions match
   }
-
+  
   isActiveSubject(subject: string): string {
     return this.activeSubject === subject ? 'active-subject' : '';
   }
 
 
   MarkedForReview() {
-    const questionId = this.getCurrentQuestionId();
-    if (questionId !== undefined) {
-      if (this.MarkQuestion[questionId]) {
-        this.MarkQuestion[questionId] = !this.MarkQuestion[questionId];
-      }
-      else {
-        this.MarkQuestion[questionId] = true;
-      }
-
-
-    }
-
-     // Move to the next question
-     if (this.currentQuestionIndex < this.subjectQuestions.length - 1) {
-      this.currentQuestionIndex++;
-      this.startQuestionTimer(); // Start the timer for the next question
-    }
-    else {
-      // Move to the next subject if the current subject's questions are exhausted
-      const nextSubject = this.getNextSubject();
-      if (nextSubject) {
-        this.filterBySubject(nextSubject); // Switch to the next subject
-        this.currentQuestionIndex = 0; // Start from the first question of the new subject
-        this.startQuestionTimer(); // Start the timer for the new question
-      } 
-    }
-
-
+    this.saveAndMarkForReview();
   }
 
   getNotAnsweredQuestionsCount() {
     return Object.keys(this.mockTest.questions).length - this.getAnsweredQuestionsCount()
   }
   getNotVisitedQuestionsCount() {
-    return Object.keys(this.mockTest.questions).length - Object.keys(this.userResponses).length
+    return Object.keys(this.mockTest.questions).length - (Object.keys(this.visitedQuestions).length)
   }
   getMarkedForReviewQuestionsCount() {
-    return Object.values(this.MarkQuestion).filter(
-      response => response == true
-    ).length;
+    console.log(Object.values(this.markedForReviewAnswers).length, " getMarkedForReviewQuestionsCount")
+    return Object.values(this.markedForReviewAnswers).length;
+
+  }
+  getSaveAndMarkedForReviewQuestionsCount() {
+    console.log(Object.values(this.saveAndMarkForReviewAnswers).length, " getSaveAndMarkedForReviewQuestionsCount")
+
+    return Object.values(this.saveAndMarkForReviewAnswers).length;
 
   }
 
@@ -1058,11 +1095,13 @@ export class MockTestComponent implements OnInit, OnDestroy {
   navigate() {
     this.router.navigate(['mock-test/instructions']);
   }
+
+
   openSummaryModal(): void {
-     const subjects = this.getUniqueSubjects();
+    const subjects = this.getUniqueSubjects();
 
     // Loop through each subject and dynamically create the sections data
-     const sections = subjects.map(subject => ({
+    const sections = subjects.map(subject => ({
       name: subject,
       questions: this.getTotalQuestionsCountBySubject(subject),
       answered: this.getAnsweredQuestionsCountBySubject(subject),
@@ -1071,37 +1110,38 @@ export class MockTestComponent implements OnInit, OnDestroy {
       notVisited: this.getNotVisitedQuestionsCountBySubject(subject)
     }));
 
-    this.dialog.open(TestSummaryComponent , {
+    this.dialog.open(TestSummaryComponent, {
       data: sections
 
-    }   
+    }
     );
   }
   getUniqueSubjects(): string[] {
     const subjectsSet = new Set<string>(this.mockTest.questions.map((q: any) => q.subject as string));
     return Array.from(subjectsSet);
   }
-  
-  
+
+
 
   getAnsweredQuestionsCountBySubject(subject: string): number {
     return this.mockTest.questions.filter(
-      (q: any) => q.subject === subject && this.userResponses[q.questionId]?.selectedOption !== null
+      (q: any) => q.subject === subject && this.userResponses[q.questionId] && this.userResponses[q.questionId].selectedOption !== undefined && this.userResponses[q.questionId].selectedOption !== null
     ).length;
   }
-  
+
+
   getNotAnsweredQuestionsCountBySubject(subject: string): number {
     const totalQuestions = this.getTotalQuestionsCountBySubject(subject);
     const answeredQuestions = this.getAnsweredQuestionsCountBySubject(subject);
     return totalQuestions - answeredQuestions;
   }
-  
+
   getMarkedForReviewQuestionsCountBySubject(subject: string): number {
     return this.mockTest.questions.filter(
-      (q: any) => q.subject === subject && this.MarkQuestion[q.questionId]
+      (q: any) => q.subject === subject && this.saveAndMarkForReviewAnswers[q.questionId]
     ).length;
   }
-  
+
   getNotVisitedQuestionsCountBySubject(subject: string): number {
     const totalQuestions = this.getTotalQuestionsCountBySubject(subject);
     const visitedQuestions = this.mockTest.questions.filter(
@@ -1109,12 +1149,138 @@ export class MockTestComponent implements OnInit, OnDestroy {
     ).length;
     return totalQuestions - visitedQuestions;
   }
-  
+
   getTotalQuestionsCountBySubject(subject: string): number {
     return this.mockTest.questions.filter((q: any) => q.subject === subject).length;
   }
-  
- 
-  
-  
+
+  // Save the current question's visit status
+  saveCurrentQuestionVisitStatus() {
+    const currentQuestionId = this.getCurrentQuestionId();
+    if (currentQuestionId !== undefined) {
+      this.visitedQuestions[currentQuestionId] = true;
+    }
+  }
+
+
+
+
+  saveAndMarkForReview() {
+    this.stopQuestionTimer();
+    // Stop timer for the current question
+    this.saveCurrentQuestionVisitStatus();
+
+    const currentQuestionId = this.getCurrentQuestionId();
+    if (currentQuestionId !== undefined) {
+      if (this.selectedAnswer === null ||  this.selectedAnswer === undefined) {
+        alert(" Please choose an option ")
+        return
+      }
+      else {
+        // Save the user's response
+        this.saveAndMarkForReviewAnswers[currentQuestionId] = {
+          selectedOption: this.selectedAnswer,
+          timeTaken: this.getQuestionTime(currentQuestionId) / 1000,
+          isCorrect: this.isAnswerCorrect(currentQuestionId, this.selectedAnswer || ''),
+          marksAwarded: this.getMarksAwarded(currentQuestionId, this.selectedAnswer || ''),
+        };
+        this.selectedAnswer = null; // Clear the selected answer for the next question
+        delete this.markedForReviewAnswers[currentQuestionId];
+        delete this.userResponses[currentQuestionId];
+        // Move to the next question
+        if (this.currentQuestionIndex < this.subjectQuestions.length - 1) {
+          this.currentQuestionIndex++;
+          const currentQuestionId = this.getCurrentQuestionId();
+          this.visitedQuestions[currentQuestionId] = true;
+          this.setSelectedValue();
+          this.startQuestionTimer(); // Start the timer for the next question
+        }
+        else {
+          // Move to the next subject if the current subject's questions are exhausted
+          const nextSubject = this.getNextSubject();
+          if (nextSubject) {
+            this.filterBySubject(nextSubject); // Switch to the next subject
+            this.currentQuestionIndex = 0; // Start from the first question of the new subject
+            this.startQuestionTimer(); // Start the timer for the new question
+          }
+        }
+
+      }
+    }
+  }
+  // Object to store answers for "Marked for Review" questions
+
+  MarkForReviewAndNext() {
+    debugger
+
+    this.stopQuestionTimer();
+    this.saveCurrentQuestionVisitStatus();
+
+    const currentQuestionId = this.getCurrentQuestionId();
+
+    if (currentQuestionId !== undefined) {
+      // Save the selected answer temporarily in 'markedForReviewAnswers'
+      this.markedForReviewAnswers[currentQuestionId] = {
+        selectedOption: this.selectedAnswer,
+        timeTaken: this.getQuestionTime(currentQuestionId) / 1000,
+        isCorrect: this.isAnswerCorrect(currentQuestionId, this.selectedAnswer || ''),
+        marksAwarded: this.getMarksAwarded(currentQuestionId, this.selectedAnswer || ''),
+      };
+      this.selectedAnswer = null;
+
+      delete this.userResponses[currentQuestionId];
+      delete this.saveAndMarkForReviewAnswers[currentQuestionId];
+      // Clear the selected answer and do NOT store it in 'userResponses'
+
+      // Move to the next question
+      if (this.currentQuestionIndex < this.subjectQuestions.length - 1) {
+        this.currentQuestionIndex++;
+        const newQuestionId = this.getCurrentQuestionId();
+        this.visitedQuestions[newQuestionId] = true;
+
+        this.setSelectedValue();
+
+        this.startQuestionTimer();
+      } else {
+        // Handle switching to the next subject if no more questions in the current subject
+        const nextSubject = this.getNextSubject();
+        if (nextSubject) {
+          this.filterBySubject(nextSubject);
+          this.currentQuestionIndex = 0;
+          this.startQuestionTimer();
+        }
+      }
+    }
+    console.log(this.markedForReviewAnswers)
+    //  console.log(this.saveAndMarkForReviewAnswers)
+
+  }
+
+
+  setSelectedValue() {
+    debugger
+    const newQuestionId = this.getCurrentQuestionId();
+    if (this.markedForReviewAnswers[newQuestionId]) {
+      this.selectedAnswer = this.markedForReviewAnswers[newQuestionId].selectedOption;
+      delete this.userResponses[newQuestionId];
+      delete this.saveAndMarkForReviewAnswers[newQuestionId];
+
+    } else if (this.userResponses[newQuestionId]) {
+      this.selectedAnswer = this.userResponses[newQuestionId].selectedOption;
+      delete this.markedForReviewAnswers[newQuestionId];
+      delete this.saveAndMarkForReviewAnswers[newQuestionId];
+
+    } else if (this.saveAndMarkForReviewAnswers[newQuestionId]) {
+      this.selectedAnswer = this.saveAndMarkForReviewAnswers[newQuestionId].selectedOption;
+      delete this.markedForReviewAnswers[newQuestionId];
+      delete this.userResponses[newQuestionId];
+
+    }
+     else {
+      this.selectedAnswer = null;
+    }
+
+  }
+
+
 }
