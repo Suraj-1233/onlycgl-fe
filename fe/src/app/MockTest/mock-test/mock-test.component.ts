@@ -1108,7 +1108,8 @@ export class MockTestComponent implements OnInit, OnDestroy {
       answered: this.getAnsweredQuestionsCountBySubject(subject),
       notAnswered: this.getNotAnsweredQuestionsCountBySubject(subject),
       markedForReview: this.getMarkedForReviewQuestionsCountBySubject(subject),
-      notVisited: this.getNotVisitedQuestionsCountBySubject(subject)
+      notVisited: this.getNotVisitedQuestionsCountBySubject(subject),
+      SaveAndmarkedForReview:this.getSaveAndMarkForReviewQuestionsCountBySubject(subject)
     }));
 
     this.dialog.open(TestSummaryComponent, {
@@ -1138,17 +1139,37 @@ export class MockTestComponent implements OnInit, OnDestroy {
   }
 
   getMarkedForReviewQuestionsCountBySubject(subject: string): number {
-    return this.mockTest.questions.filter(
-      (q: any) => q.subject === subject && this.saveAndMarkForReviewAnswers[q.questionId]
+    debugger
+    const allQuestions = this.mockTest.questions.filter((question: any) => question.subject === subject);
+
+    const markedForReviewCount = allQuestions.filter((question: any) =>
+      this.markedForReviewAnswers.hasOwnProperty(question.questionId)
     ).length;
+    return markedForReviewCount;
+  }
+  getSaveAndMarkForReviewQuestionsCountBySubject(subject: string): number {
+    debugger
+    const allQuestions = this.mockTest.questions.filter((question: any) => question.subject === subject);
+
+    const savedmarkedForReviewCount = allQuestions.filter((question: any) =>
+      this.saveAndMarkForReviewAnswers.hasOwnProperty(question.questionId)
+    ).length;
+    return savedmarkedForReviewCount;
   }
 
+
+
+
+
   getNotVisitedQuestionsCountBySubject(subject: string): number {
+    debugger
     const totalQuestions = this.getTotalQuestionsCountBySubject(subject);
     const visitedQuestions = this.mockTest.questions.filter(
-      (q: any) => q.subject === subject && this.userResponses.hasOwnProperty(q.questionId)
+      (q: any) => q.subject === subject && this.visitedQuestions.hasOwnProperty(q.questionId)
     ).length;
-    return totalQuestions - visitedQuestions;
+
+    const d= totalQuestions - visitedQuestions;
+    return d;
   }
 
   getTotalQuestionsCountBySubject(subject: string): number {
