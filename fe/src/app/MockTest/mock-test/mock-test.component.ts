@@ -819,7 +819,6 @@ export class MockTestComponent implements OnInit, OnDestroy {
   saveAndNext() {
     debugger
 
-    this.stopQuestionTimer();
     // Stop timer for the current question
     this.saveCurrentQuestionVisitStatus();
 
@@ -831,6 +830,8 @@ export class MockTestComponent implements OnInit, OnDestroy {
         return
       }
       // Save the user's response
+      this.stopQuestionTimer();
+
       this.userResponses[currentQuestionId] = {
         selectedOption: this.selectedAnswer,
         timeTaken: this.getQuestionTime(currentQuestionId) / 1000,
@@ -1166,7 +1167,6 @@ export class MockTestComponent implements OnInit, OnDestroy {
 
 
   saveAndMarkForReview() {
-    this.stopQuestionTimer();
     // Stop timer for the current question
     this.saveCurrentQuestionVisitStatus();
 
@@ -1178,6 +1178,8 @@ export class MockTestComponent implements OnInit, OnDestroy {
       }
       else {
         // Save the user's response
+        this.stopQuestionTimer();
+
         this.saveAndMarkForReviewAnswers[currentQuestionId] = {
           selectedOption: this.selectedAnswer,
           timeTaken: this.getQuestionTime(currentQuestionId) / 1000,
